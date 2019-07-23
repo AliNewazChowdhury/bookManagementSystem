@@ -1,0 +1,86 @@
+﻿@model Hospital_Management.Models.loginModel
+
+@{
+    ViewBag.Title = "Index";
+}
+
+@section navbar{
+    @Html.Partial("_NavbarPartial", "Login")
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+<div class="form-horizontal col-md-offset-3">
+
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="form-group">
+        @Html.LabelFor(model => model.username, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.username, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.username, "", new { @class = "text -danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.password, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.password, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.password, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-3 col-md-10">
+            <input id="btnSubmit" type="submit" value="Login" class="btn btn-success" />
+        </div>
+    </div>
+    <div id="myAlert" class="alert alert-danger collapse">
+        <a id="linkClose" href="#" class="close">&times;</a>
+        <strong>Error!</strong> Please enter the correct credentials
+    </div>
+</div>
+    
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#btnSubmit').click(function () {
+            var data = {
+                "username": $("#username").val(),
+                "password": $("#password").val()
+            };
+        $.ajax({
+            url: "/Login/validateuser",
+            type: "POST",
+            data: JSON.stringify(data),
+            dataType: "json",
+            contentType: "application/json",
+            success: function (response) {
+                if (response.success) {
+                    //alert("login successful");
+                    var url = "/Patient/Index";
+                    window.location.href = url;
+                }
+                else {
+                    alert("Please Enter correct credentials");
+                    //$('#linkClose').click(function () {
+                    //    $('myAlert').hide('fade');
+                    //});
+                }
+            },
+            error: function () {
+               // $("#myAlert").show();
+                console.log('Login Fail!!!');
+
+            }
+            });
+        });
+    });
+</script>
